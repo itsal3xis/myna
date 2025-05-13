@@ -2,7 +2,7 @@ import os
 import subprocess
 import platform
 import readline  # macOS/Linux
-from myna.utils import load_config, load_aliases, save_aliases, run_shell_command
+from utils import load_config, load_aliases, save_aliases, run_shell_command
 
 # For tab completion of commands and filenames
 def completer(text, state):
