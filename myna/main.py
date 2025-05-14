@@ -2,7 +2,7 @@ import os
 import subprocess
 import platform
 import readline  # macOS/Linux
-from utils import load_config, load_aliases, save_aliases, run_shell_command
+from utils import load_config, load_aliases, save_aliases, run_shell_command, configparser
 
 # For tab completion of commands and filenames
 def completer(text, state):
@@ -18,7 +18,7 @@ def completer(text, state):
 
 def main():
     aliases = load_aliases()
-    settings = load_config()
+    config = load_config()
     username = os.getlogin()
     hostname = platform.node()
 
@@ -26,8 +26,12 @@ def main():
     readline.set_completer(completer)
     readline.parse_and_bind("tab: complete")
 
-    config = load_config()
-    color_code = config.getint("appearance", "prompt_color")
+    # Get prompt color with fallback
+    try:
+        color_code = config.getint("appearance", "prompt_color")
+    except (configparser.NoSectionError, configparser.NoOptionError, ValueError):
+        print("Error: Invalid or missing 'prompt_color'. Using default (37).")
+        color_code = 37  # Default to white
 
     while True:
         try:

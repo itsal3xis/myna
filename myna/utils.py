@@ -11,6 +11,8 @@ ALIASES_PATH = os.path.join(BASE_DIR, "aliases.cfg")
 def load_config():
     config = configparser.ConfigParser()
     config.read(CONFIG_PATH)
+    if not config.sections():
+        print(f"Error: Config file not found or empty at {CONFIG_PATH}")
     return config
 
 # Load aliases from aliases.cfg
