@@ -16,11 +16,6 @@ def completer(text, state):
         completions = []
     return completions[state] if state < len(completions) else None
 
-def get_colored_prompt(username, hostname, cwd, color_code):
-    RESET = "\033[0m"
-    COLOR = f"\033[{color_code}m"
-    return f"{COLOR}{username}@{hostname}:{cwd} 🐦>{RESET} "
-
 def main():
     aliases = load_aliases()
     settings = load_config()
@@ -32,14 +27,13 @@ def main():
     readline.parse_and_bind("tab: complete")
 
     config = load_config()
-    color_code = config.getint("appearance", "prompt_color", fallback=32)
+    color_code = config.getint("appearance", "prompt_color")
 
     while True:
         try:
             cwd = os.getcwd().replace(os.path.expanduser("~"), "~")
-            #prompt = get_colored_prompt(username, hostname, cwd, color_code)
-            test = print(color_code)
-            cmd_input = input(test).strip() #prompt
+            prompt = f"\033[{color_code}m{username}@{hostname}:{cwd} 🐦>\033[0m"
+            cmd_input = input(prompt).strip()
 
             if not cmd_input:
                 continue
