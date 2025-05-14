@@ -31,9 +31,8 @@ def main():
     readline.set_completer(completer)
     readline.parse_and_bind("tab: complete")
 
-    # Get color code from config (default green = 32)
     config = load_config()
-    color_code = config.getint("settings", "color_code", fallback=32)
+    color_code = config.getint("appearance", "prompt_color", fallback=32)
 
     while True:
         try:
