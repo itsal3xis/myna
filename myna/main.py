@@ -37,8 +37,9 @@ def main():
     while True:
         try:
             cwd = os.getcwd().replace(os.path.expanduser("~"), "~")
-            prompt = get_colored_prompt(username, hostname, cwd, color_code)
-            cmd_input = input(prompt).strip()
+            #prompt = get_colored_prompt(username, hostname, cwd, color_code)
+            test = print(color_code)
+            cmd_input = input(test).strip() #prompt
 
             if not cmd_input:
                 continue
