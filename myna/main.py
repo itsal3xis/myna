@@ -3,7 +3,7 @@ import subprocess
 import platform
 import sys
 from utils import load_config, load_aliases, save_aliases, run_shell_command, configparser
-import atexit
+import utils
 
 # Only import readline if not on Windows
 if platform.system() != "Windows":
@@ -22,6 +22,7 @@ def completer(text, state):
     return completions[state] if state < len(completions) else None
 
 def linux_shell(aliases, config, username, hostname, color_code):
+    open 
     # Check if auto_complete is enabled in config
     auto_complete = config.getboolean("settings", "auto_complete", fallback=True)
     if auto_complete:
@@ -34,6 +35,9 @@ def linux_shell(aliases, config, username, hostname, color_code):
             prompt = f"\033[{color_code}m{username}@{hostname}:{cwd} 🐦>\033[0m"
             cmd_input = input(prompt).strip()
             
+            with open("history.txt", "a") as hist:
+                hist.write(cmd_input + "\n")
+
             if not cmd_input:
                 continue
             
@@ -54,6 +58,10 @@ def linux_shell(aliases, config, username, hostname, color_code):
                 print(f"🔁 Alias: {cmd_input} → {real_cmd}")
                 run_shell_command(real_cmd)
                 continue
+
+            if cmd_input.startswith("history"):
+                utils.history()
+                continue
             
             result = subprocess.run(cmd_input, shell=True)
             
@@ -65,13 +73,7 @@ def linux_shell(aliases, config, username, hostname, color_code):
                     save_aliases(aliases)
                     print(f"✅ Alias saved: {cmd_input} → {new_cmd}")
                     run_shell_command(new_cmd)
-                    HISTFILE = os.path.expanduser("~/.myna_shell_history")
-                    try:
-                        readline.read_history_file(HISTFILE)
-                    except FileNotFoundError:
-                        pass
-                    atexit.register(readline.write_history_file, HISTFILE)
-                    
+            
         except KeyboardInterrupt:
             print("\n🚫 Use 'exit' to quit.")
         except EOFError:

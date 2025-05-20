@@ -31,3 +31,12 @@ def save_aliases(aliases):
 # Run shell command
 def run_shell_command(cmd):
     subprocess.run(cmd, shell=True)
+
+def history():
+    try:
+        with open("history.txt", "r") as hist:
+            lines = hist.readlines()
+            for line in lines:
+                print(line.strip())
+    except FileNotFoundError:
+        print("📁 History file not found.")
