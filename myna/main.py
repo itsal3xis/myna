@@ -4,6 +4,7 @@ import platform
 import sys
 from utils import load_config, load_aliases, save_aliases, run_shell_command, configparser
 import utils
+import time
 
 # Only import readline if not on Windows
 if platform.system() != "Windows":
@@ -22,7 +23,8 @@ def completer(text, state):
     return completions[state] if state < len(completions) else None
 
 def linux_shell(aliases, config, username, hostname, color_code):
-    open 
+    with open("history.txt", "a") as hist:
+        hist.write(time.strftime("%Y-%m-%d %H:%M:%S") + "\n")
     # Check if auto_complete is enabled in config
     auto_complete = config.getboolean("settings", "auto_complete", fallback=True)
     if auto_complete:
