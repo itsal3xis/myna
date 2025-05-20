@@ -3,6 +3,7 @@ import subprocess
 import platform
 import sys
 from utils import load_config, load_aliases, save_aliases, run_shell_command, configparser
+import atexit
 
 # Only import readline if not on Windows
 if platform.system() != "Windows":
@@ -64,6 +65,12 @@ def linux_shell(aliases, config, username, hostname, color_code):
                     save_aliases(aliases)
                     print(f"✅ Alias saved: {cmd_input} → {new_cmd}")
                     run_shell_command(new_cmd)
+                    HISTFILE = os.path.expanduser("~/.myna_shell_history")
+                    try:
+                        readline.read_history_file(HISTFILE)
+                    except FileNotFoundError:
+                        pass
+                    atexit.register(readline.write_history_file, HISTFILE)
                     
         except KeyboardInterrupt:
             print("\n🚫 Use 'exit' to quit.")
