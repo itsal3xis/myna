@@ -24,7 +24,7 @@ def completer(text, state):
 
 def linux_shell(aliases, config, username, hostname, color_code):
     with open("history.txt", "a") as hist:
-        hist.write(time.strftime("%Y-%m-%d %H:%M:%S") + "\n")
+        hist.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "\n")
     # Check if auto_complete is enabled in config
     auto_complete = config.getboolean("settings", "auto_complete", fallback=True)
     if auto_complete:
