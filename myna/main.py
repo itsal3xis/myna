@@ -21,9 +21,11 @@ def completer(text, state):
     return completions[state] if state < len(completions) else None
 
 def linux_shell(aliases, config, username, hostname, color_code):
-    # Setup tab completion for Linux/Mac
-    readline.set_completer(completer)
-    readline.parse_and_bind("tab: complete")
+    # Check if auto_complete is enabled in config
+    auto_complete = config.getboolean("settings", "auto_complete", fallback=True)
+    if auto_complete:
+        readline.set_completer(completer)
+        readline.parse_and_bind("tab: complete")
     
     while True:
         try:
