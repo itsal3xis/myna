@@ -6,6 +6,8 @@ from utils import load_config, load_aliases, save_aliases, run_shell_command, co
 import utils
 import time
 
+HISTORY_PATH = os.path.join(os.path.dirname(__file__), "history.txt")
+
 # Only import readline if not on Windows
 if platform.system() != "Windows":
     import readline  # macOS/Linux
@@ -23,8 +25,9 @@ def completer(text, state):
     return completions[state] if state < len(completions) else None
 
 def linux_shell(aliases, config, username, hostname, color_code):
-    with open("history.txt", "a") as hist:
-        hist.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "\n")
+    if os.path.exists(HISTORY_PATH):
+        with open(HISTORY_PATH, "a") as hist:
+            hist.write("\n" + time.strftime("%Y-%m-%d %H:%M:%S") + "\n")
     # Check if auto_complete is enabled in config
     auto_complete = config.getboolean("settings", "auto_complete", fallback=True)
     if auto_complete:
@@ -37,7 +40,7 @@ def linux_shell(aliases, config, username, hostname, color_code):
             prompt = f"\033[{color_code}m{username}@{hostname}:{cwd} 🐦>\033[0m"
             cmd_input = input(prompt).strip()
             
-            with open("history.txt", "a") as hist:
+            with open(HISTORY_PATH, "a") as hist:
                 hist.write(cmd_input + "\n")
 
             if not cmd_input:
@@ -62,7 +65,7 @@ def linux_shell(aliases, config, username, hostname, color_code):
                 continue
 
             if cmd_input.startswith("history"):
-                utils.history()
+                utils.history(HISTORY_PATH)
                 continue
             
             result = subprocess.run(cmd_input, shell=True)
@@ -91,6 +94,9 @@ def windows_shell(aliases, config, username, hostname, color_code):
             prompt = f"\033[{color_code}m{username}@{hostname}:{cwd} 🐦>\033[0m"
             cmd_input = input(prompt).strip()
             
+            with open(HISTORY_PATH, "a") as hist:
+                hist.write(cmd_input + "\n")
+            
             if not cmd_input:
                 continue
             
@@ -116,7 +122,7 @@ def windows_shell(aliases, config, username, hostname, color_code):
             
             if result.returncode != 0:
                 response = input(f"❓ Unknown command '{cmd_input}'. Create alias? (y/N): ").strip().lower()
-                if response == 'y':
+                if response == 'y' or response == 'yes' or response == 'Y':
                     new_cmd = input(f"📝 Real command for '{cmd_input}': ").strip()
                     aliases[cmd_input] = new_cmd
                     save_aliases(aliases)
